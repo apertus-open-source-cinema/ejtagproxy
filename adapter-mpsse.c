@@ -92,15 +92,15 @@ typedef struct {
 /*
  * Identifiers of USB adapter.
  */
-#define OLIMEX_VID              0x15ba
-#define OLIMEX_ARM_USB_TINY     0x0004  /* ARM-USB-Tiny */
-#define OLIMEX_ARM_USB_TINY_H   0x002a	/* ARM-USB-Tiny-H */
-#define OLIMEX_ARM_USB_OCD_H    0x002b	/* ARM-USB-OCD-H */
-#define OLIMEX_MIPS_USB_OCD_H   0x0036	/* MIPS-USB-OCD-H */
+#define OLIMEX_VID                  0x15ba
+#define OLIMEX_ARM_USB_TINY         0x0004  /* ARM-USB-Tiny */
+#define OLIMEX_ARM_USB_TINY_H       0x002a	/* ARM-USB-Tiny-H */
+#define OLIMEX_ARM_USB_OCD_H        0x002b	/* ARM-USB-OCD-H */
+#define OLIMEX_MIPS_USB_OCD_H       0x0036	/* MIPS-USB-OCD-H */
 
-#define DP_BUSBLASTER_VID       0x0403
-#define DP_BUSBLASTER_PID       0x6010  /* Bus Blaster v2 */
-
+#define DP_BUSBLASTER_VID           0x0403
+#define DP_BUSBLASTER_FT2232_PID    0x6010  /* Bus Blaster v2 */
+#define DP_FT4232_PID               0x6011
 /*
  * USB endpoints.
  */
@@ -838,8 +838,19 @@ adapter_t *adapter_open_mpsse (void)
                 goto found;
             }
             if (dev->descriptor.idVendor == DP_BUSBLASTER_VID &&
-                dev->descriptor.idProduct == DP_BUSBLASTER_PID) {
+                dev->descriptor.idProduct == DP_BUSBLASTER_FT2232_PID) {
                 a->adapter.name = "Dangerous Prototypes Bus Blaster";
+                a->mhz = 30;
+                a->dir_control     = 0x0f10;
+                a->trst_control    = 0x0100;
+                a->trst_inverted   = 1;
+                a->sysrst_control  = 0x0200;
+                a->sysrst_inverted = 1;
+                goto found;
+            }
+            if (dev->descriptor.idVendor == DP_BUSBLASTER_VID &&
+                dev->descriptor.idProduct == DP_FT4232_PID) {
+                a->adapter.name = "Generic FT4232 adapter";
                 a->mhz = 30;
                 a->dir_control     = 0x0f10;
                 a->trst_control    = 0x0100;
